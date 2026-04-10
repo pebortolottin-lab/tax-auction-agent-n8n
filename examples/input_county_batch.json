@@ -1,0 +1,7 @@
+{
+  "state": "FL",
+  "county": "Broward",
+  "run_mode": "county_batch",
+  "auction_date": "2026-06-15",
+  "max_properties": 200
+}

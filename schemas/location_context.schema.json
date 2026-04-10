@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "location_context",
+  "type": "object",
+  "required": ["run_id", "state", "county", "parcel_id", "map_match_yes_no"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": "string" },
+    "county": { "type": "string" },
+    "parcel_id": { "type": "string" },
+    "map_match_yes_no": { "type": "boolean" },
+    "street_view_available": { "type": "boolean" },
+    "neighborhood_condition_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "nearby_positive_features": { "type": "array", "items": { "type": "string" } },
+    "nearby_negative_features": { "type": "array", "items": { "type": "string" } },
+    "manual_review_required": { "type": "boolean" },
+    "source_links": { "type": "array", "items": { "type": "string" } },
+    "last_verified_at": { "type": "string", "format": "date-time" }
+  }
+}

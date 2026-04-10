@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "run_log",
+  "type": "object",
+  "required": ["run_id", "step", "status", "started_at"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": ["string", "null"] },
+    "county": { "type": ["string", "null"] },
+    "parcel_id": { "type": ["string", "null"] },
+    "step": { "type": "string" },
+    "status": { "type": "string", "enum": ["queued", "running", "completed", "discarded", "error"] },
+    "message": { "type": ["string", "null"] },
+    "error_code": { "type": ["string", "null"] },
+    "source_links": { "type": "array", "items": { "type": "string" } },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

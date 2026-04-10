@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "approved_candidates",
+  "type": "object",
+  "required": ["run_id", "state", "county", "parcel_id", "final_score", "decision"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": "string" },
+    "county": { "type": "string" },
+    "parcel_id": { "type": "string" },
+    "final_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "decision": { "type": "string", "enum": ["approved", "watchlist", "reject"] },
+    "summary": { "type": "string" },
+    "auction_link": { "type": ["string", "null"] },
+    "appraisal_link": { "type": ["string", "null"] },
+    "gis_link": { "type": ["string", "null"] },
+    "maps_link": { "type": ["string", "null"] },
+    "public_records_link": { "type": ["string", "null"] },
+    "analyst_notes": { "type": ["string", "null"] },
+    "last_verified_at": { "type": "string", "format": "date-time" }
+  }
+}

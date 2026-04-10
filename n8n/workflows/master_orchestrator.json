@@ -1,0 +1,96 @@
+{
+  "name": "master_orchestrator_tax_auction",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const input = items[0].json;\nconst runId = `run_${Date.now()}`;\nreturn [{ json: {\n  run_id: runId,\n  state: input.state || 'FL',\n  county: input.county || 'Miami-Dade',\n  parcel_id: input.parcel_id || null,\n  run_mode: input.run_mode || (input.parcel_id ? 'single_property' : 'county_batch'),\n  started_at: new Date().toISOString()\n}}];"
+      },
+      "id": "2",
+      "name": "Init Run Context",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "REPLACE_WITH_STEP1_WORKFLOW_ID",
+        "options": {}
+      },
+      "id": "3",
+      "name": "Execute Step 1",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [700, 160],
+      "notes": "County rules with cache-first strategy"
+    },
+    {
+      "parameters": {
+        "workflowId": "REPLACE_WITH_STEP2_WORKFLOW_ID",
+        "options": {}
+      },
+      "id": "4",
+      "name": "Execute Step 2",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [700, 300],
+      "notes": "Property core + hard filters"
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { ...items[0].json, step3_status: 'manual integration placeholder', step4_status: 'manual integration placeholder', step5_status: 'manual integration placeholder', step6_status: 'manual integration placeholder' } }];"
+      },
+      "id": "5",
+      "name": "Steps 3-6 Placeholders",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [950, 300],
+      "notes": "Replace by Execute Workflow nodes for steps 3-6"
+    },
+    {
+      "parameters": {
+        "workflowId": "REPLACE_WITH_STEP7_WORKFLOW_ID",
+        "options": {}
+      },
+      "id": "6",
+      "name": "Execute Step 7",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "REPLACE_GOOGLE_SHEETS_ID",
+        "range": "run_log!A:Z",
+        "options": {}
+      },
+      "id": "7",
+      "name": "Log Run to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1450, 300],
+      "notes": "Google Sheets integration placeholder"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Init Run Context", "type": "main", "index": 0 }]] },
+    "Init Run Context": { "main": [[{ "node": "Execute Step 1", "type": "main", "index": 0 }]] },
+    "Execute Step 1": { "main": [[{ "node": "Execute Step 2", "type": "main", "index": 0 }]] },
+    "Execute Step 2": { "main": [[{ "node": "Steps 3-6 Placeholders", "type": "main", "index": 0 }]] },
+    "Steps 3-6 Placeholders": { "main": [[{ "node": "Execute Step 7", "type": "main", "index": 0 }]] },
+    "Execute Step 7": { "main": [[{ "node": "Log Run to Sheets", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "v0.1.0"
+}

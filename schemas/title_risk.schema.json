@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "title_risk",
+  "type": "object",
+  "required": ["run_id", "state", "county", "parcel_id", "title_risk_score"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": "string" },
+    "county": { "type": "string" },
+    "parcel_id": { "type": "string" },
+    "clerk_url": { "type": ["string", "null"] },
+    "open_liens_found": { "type": "boolean" },
+    "code_violations_found": { "type": "boolean" },
+    "demolition_flag": { "type": "boolean" },
+    "cloud_on_title_flag": { "type": "boolean" },
+    "quiet_title_likely": { "type": "boolean" },
+    "title_risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "discard_reason": { "type": ["string", "null"] },
+    "source_links": { "type": "array", "items": { "type": "string" } },
+    "last_verified_at": { "type": "string", "format": "date-time" }
+  }
+}

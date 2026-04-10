@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "env_risk",
+  "type": "object",
+  "required": ["run_id", "state", "county", "parcel_id", "env_score"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": "string" },
+    "county": { "type": "string" },
+    "parcel_id": { "type": "string" },
+    "flood_flag": { "type": "boolean" },
+    "wetland_flag": { "type": "boolean" },
+    "contamination_flag": { "type": "boolean" },
+    "protected_area_flag": { "type": "boolean" },
+    "landlocked_flag": { "type": "boolean" },
+    "topography_issue_flag": { "type": "boolean" },
+    "env_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "discard_reason": { "type": ["string", "null"] },
+    "source_links": { "type": "array", "items": { "type": "string" } },
+    "last_verified_at": { "type": "string", "format": "date-time" }
+  }
+}

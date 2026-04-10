@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "county_rules",
+  "type": "object",
+  "required": ["run_id", "state", "county", "sale_type", "auction_url", "last_verified_at"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": "string" },
+    "county": { "type": "string" },
+    "sale_type": { "type": "string", "enum": ["tax_deed", "tax_lien", "redeemable_deed", "unknown"] },
+    "auction_url": { "type": "string" },
+    "registration_required": { "type": "boolean" },
+    "registration_deadline": { "type": ["string", "null"], "format": "date-time" },
+    "auction_date": { "type": ["string", "null"], "format": "date-time" },
+    "auction_frequency": { "type": "string" },
+    "payment_deadline": { "type": ["string", "null"], "format": "date-time" },
+    "deed_delivery_time": { "type": "string" },
+    "liens_cleared_status": { "type": "string" },
+    "list_release_date": { "type": ["string", "null"], "format": "date-time" },
+    "otc_available": { "type": "boolean" },
+    "land_bank_available": { "type": "boolean" },
+    "source_links": { "type": "array", "items": { "type": "string" } },
+    "data_quality_status": { "type": "string", "enum": ["official", "secondary", "inferred"] },
+    "last_verified_at": { "type": "string", "format": "date-time" }
+  }
+}

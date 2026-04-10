@@ -1,0 +1,93 @@
+{
+  "name": "step1_county_rules_agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "operation": "lookup",
+        "sheetId": "REPLACE_GOOGLE_SHEETS_ID",
+        "range": "county_rules!A:Z",
+        "lookupColumn": "county",
+        "lookupValue": "={{$json.county}}"
+      },
+      "id": "2",
+      "name": "Lookup County Rules Cache",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [470, 300],
+      "notes": "Cache-first strategy"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$items().length}}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Cache Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{json: {...$json, source_mode:'cache', last_verified_at:new Date().toISOString()}}];"
+      },
+      "id": "4",
+      "name": "Return Cached Rules",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [940, 180]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{json: {\n  ...$json,\n  sale_type: 'unknown',\n  auction_url: 'manual integration placeholder',\n  registration_required: false,\n  auction_frequency: 'unknown',\n  deed_delivery_time: 'unknown',\n  liens_cleared_status: 'unknown',\n  otc_available: false,\n  land_bank_available: false,\n  source_links: ['scraping layer placeholder'],\n  data_quality_status: 'inferred',\n  last_verified_at: new Date().toISOString()\n}}];"
+      },
+      "id": "5",
+      "name": "Fetch Official Sources Placeholder",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [940, 420],
+      "notes": "Replace by HTTP + parsing nodes per county"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "REPLACE_GOOGLE_SHEETS_ID",
+        "range": "county_rules!A:Z"
+      },
+      "id": "6",
+      "name": "Persist County Rules",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1180, 420]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Lookup County Rules Cache", "type": "main", "index": 0 }]] },
+    "Lookup County Rules Cache": { "main": [[{ "node": "Cache Found?", "type": "main", "index": 0 }]] },
+    "Cache Found?": {
+      "main": [
+        [{ "node": "Return Cached Rules", "type": "main", "index": 0 }],
+        [{ "node": "Fetch Official Sources Placeholder", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Official Sources Placeholder": { "main": [[{ "node": "Persist County Rules", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "versionId": "v0.1.0"
+}

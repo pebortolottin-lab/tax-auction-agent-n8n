@@ -1,0 +1,64 @@
+{
+  "name": "step2_property_core_agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [220, 320]
+    },
+    {
+      "parameters": {
+        "functionCode": "const p = $json.parcel_id || $json.folio || $json.property_number || null;\nif(!p){ throw new Error('parcel_id/folio/property_number required'); }\nreturn [{json:{...$json, parcel_id:p}}];"
+      },
+      "id": "2",
+      "name": "Normalize Identifiers",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "functionCode": "// manual integration placeholder / scraping layer placeholder\nreturn [{json:{\n  ...$json,\n  owner_name:'unknown',\n  property_address:'unknown',\n  legal_description:'unknown',\n  acreage:null,\n  zoning:null,\n  use_code:null,\n  exempt_yes_no:null,\n  gis_url:'manual integration placeholder',\n  appraisal_url:'manual integration placeholder',\n  regrid_url:null,\n  source_links:['scraping layer placeholder'],\n  last_verified_at:new Date().toISOString()\n}}];"
+      },
+      "id": "3",
+      "name": "Fetch Property Data Placeholder",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [700, 320]
+    },
+    {
+      "parameters": {
+        "functionCode": "const row = {...$json};\nconst legal = (row.legal_description || '').toLowerCase();\nconst und = /\\bund\\b|undivided|fractional|parte ideal/.test(legal);\nconst badUse = /cemetery|roadway|drainage|common area|unusable/.test(`${row.use_code || ''} ${legal}`.toLowerCase());\nconst missingLegal = !row.legal_description || row.legal_description === 'unknown';\nlet discard = null;\nlet accessFlag = 'unknown';\nif (/landlocked/.test(legal)) accessFlag = 'suspected_landlocked'; else accessFlag = 'ok';\nif (und) discard = 'UND_OR_FRACTIONAL_INTEREST';\nif (!discard && missingLegal) discard = 'MISSING_COMPLETE_LEGAL_DESCRIPTION';\nif (!discard && badUse) discard = 'UNUSABLE_OR_RESTRICTED_LOT_TYPE';\nreturn [{json:{...row, und_flag:und, access_flag:accessFlag, discard_reason:discard}}];"
+      },
+      "id": "4",
+      "name": "Apply Hard Filters",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [940, 320]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "REPLACE_GOOGLE_SHEETS_ID",
+        "range": "property_core!A:Z"
+      },
+      "id": "5",
+      "name": "Persist Property Core",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1180, 320]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Normalize Identifiers", "type": "main", "index": 0 }]] },
+    "Normalize Identifiers": { "main": [[{ "node": "Fetch Property Data Placeholder", "type": "main", "index": 0 }]] },
+    "Fetch Property Data Placeholder": { "main": [[{ "node": "Apply Hard Filters", "type": "main", "index": 0 }]] },
+    "Apply Hard Filters": { "main": [[{ "node": "Persist Property Core", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "versionId": "v0.1.0"
+}

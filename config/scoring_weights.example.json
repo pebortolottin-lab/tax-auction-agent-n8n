@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0",
+  "sale_type_weights": {
+    "tax_deed": {
+      "env_risk": 0.25,
+      "title_risk": 0.35,
+      "valuation": 0.30,
+      "location_context": 0.10
+    },
+    "tax_lien": {
+      "env_risk": 0.15,
+      "title_risk": 0.45,
+      "valuation": 0.25,
+      "location_context": 0.15
+    },
+    "redeemable_deed": {
+      "env_risk": 0.20,
+      "title_risk": 0.40,
+      "valuation": 0.25,
+      "location_context": 0.15
+    }
+  },
+  "veto_rules": [
+    "und_flag == true",
+    "legal_description_missing == true",
+    "demolition_flag == true"
+  ]
+}

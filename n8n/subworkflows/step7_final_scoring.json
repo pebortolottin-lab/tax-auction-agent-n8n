@@ -1,0 +1,42 @@
+{
+  "name": "step7_final_scoring_agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const d = $json;\nconst env = Number(d.env_score ?? 50);\nconst title = Number(d.title_risk_score ?? 50);\nconst margin = Number(d.margin_pct ?? 0);\nconst location = Number(d.neighborhood_condition_score ?? 50);\nconst und = Boolean(d.und_flag);\nconst demolition = Boolean(d.demolition_flag);\nconst missingLegal = !d.legal_description || d.legal_description === 'unknown';\nlet decision = 'watchlist';\nlet finalScore = (100-env)*0.25 + (100-title)*0.35 + Math.min(Math.max(margin,0),100)*0.30 + location*0.10;\nif (und || demolition || missingLegal) { decision = 'reject'; finalScore = Math.min(finalScore, 20); }\nelse if (finalScore >= 75) decision = 'approved';\nelse if (finalScore < 50) decision = 'reject';\nconst summary = `Decision=${decision}; score=${finalScore.toFixed(1)}; veto=${und||demolition||missingLegal}`;\nreturn [{json:{...d, final_score:Number(finalScore.toFixed(2)), decision, summary, analyst_notes:'Review source_links before bidding', last_verified_at:new Date().toISOString()}}];"
+      },
+      "id": "2",
+      "name": "Compute Final Score",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "REPLACE_GOOGLE_SHEETS_ID",
+        "range": "approved_candidates!A:Z"
+      },
+      "id": "3",
+      "name": "Persist Final Decision",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [760, 300]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Compute Final Score", "type": "main", "index": 0 }]] },
+    "Compute Final Score": { "main": [[{ "node": "Persist Final Decision", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "versionId": "v0.1.0"
+}

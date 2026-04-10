@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "property_core",
+  "type": "object",
+  "required": ["run_id", "state", "county", "parcel_id", "legal_description", "und_flag"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "state": { "type": "string" },
+    "county": { "type": "string" },
+    "parcel_id": { "type": "string" },
+    "folio": { "type": ["string", "null"] },
+    "property_address": { "type": ["string", "null"] },
+    "owner_name": { "type": ["string", "null"] },
+    "legal_description": { "type": "string" },
+    "acreage": { "type": ["number", "null"] },
+    "zoning": { "type": ["string", "null"] },
+    "use_code": { "type": ["string", "null"] },
+    "exempt_yes_no": { "type": ["boolean", "null"] },
+    "gis_url": { "type": ["string", "null"] },
+    "appraisal_url": { "type": ["string", "null"] },
+    "regrid_url": { "type": ["string", "null"] },
+    "und_flag": { "type": "boolean" },
+    "access_flag": { "type": "string", "enum": ["ok", "suspected_landlocked", "unknown"] },
+    "discard_reason": { "type": ["string", "null"] },
+    "source_links": { "type": "array", "items": { "type": "string" } },
+    "last_verified_at": { "type": "string", "format": "date-time" }
+  }
+}
